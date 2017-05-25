@@ -48,10 +48,11 @@ class Game extends React.Component {
     super();
     this.state = {
       history: [{
-        squares: Array(9).fill(null)
+        squares: generateBoard()
       }],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      options: ['X', 'O'],
     };
   }
 
@@ -79,18 +80,63 @@ class Game extends React.Component {
     });
   }
 
+  /*
+   * Pass a step with only a single move in it. Return the index of that move.
+   */
+  getMoveIndex(squares) {
+    let index = -1;
+    this.state.options.map( option => {
+      if (squares.indexOf(option) > -1) {
+        index = squares.indexOf(option);
+      }
+    });
+    return index
+  }
+
+  getMoveDiff(squares, prevStepSquares) {
+    const board = generateBoard();
+    for (let i=0; i < squares.length; i++) {
+      if (squares[i] !== prevStepSquares[i]) {
+        board[i] = squares[i];
+        return board
+      }
+    }
+  }
+
+  /*
+   * Given an index (e.g. 3) return coords (x, y) (e.g. (2, 2) on a 3x3 board)
+   */
+  boardIndexToCoords(index) {
+    const xRow = Math.floor(index / 3);
+    const yCol = index - (xRow * 3);
+    return '(' + xRow + ', ' + yCol + ')';
+  }
+
+  getMoveDesc(step, moveIndex, history) {
+    if (!moveIndex) {
+      return 'Game Start'
+    } else {
+      let thisMoveStep;
+      const prevMoveIndex = moveIndex - 1;
+      if (prevMoveIndex === -1) {
+        thisMoveStep = step.squares
+      } else {
+        thisMoveStep = this.getMoveDiff(step.squares, history[prevMoveIndex].squares)
+      }
+      return 'Move #' + moveIndex + ' ' + this.boardIndexToCoords(this.getMoveIndex(thisMoveStep));
+    }
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map((step, move) => {
-      const desc = move ?
-        'Move #' + move :
-        'Game start';
+    const moves = history.map((step, moveIndex) => {
+      const desc = this.getMoveDesc(step, moveIndex, history);
       return (
-        <li key={move}>
-          <a href="#" onClick={() => this.jumpTo(move)}>{desc}</a>
+        <li key={moveIndex}>
+          <a href="#" onClick={() => this.jumpTo(moveIndex)}>{desc}</a>
         </li>
       );
     });
@@ -144,5 +190,9 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function generateBoard() {
+  return Array(9).fill(null)
 }
 
