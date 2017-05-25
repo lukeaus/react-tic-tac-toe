@@ -134,9 +134,12 @@ class Game extends React.Component {
 
     const moves = history.map((step, moveIndex) => {
       const desc = this.getMoveDesc(step, moveIndex, history);
+      const isCurrent = moveIndex == this.state.stepNumber;
       return (
         <li key={moveIndex}>
-          <a href="#" onClick={() => this.jumpTo(moveIndex)}>{desc}</a>
+          <a href="#"
+          className={(isCurrent ? 'bold' : '')}
+          onClick={() => this.jumpTo(moveIndex)}>{desc}</a>
         </li>
       );
     });
