@@ -1,13 +1,14 @@
 {
   "name": "hello-world",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
   },
   "devDependencies": {
-    "react-scripts": "1.0.5"
+    "react-scripts": "1.0.5",
+    "s3": "^4.4.0"
   },
   "scripts": {
     "start": "react-scripts start",
