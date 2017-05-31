@@ -41,6 +41,15 @@ class Board extends React.Component {
   }
 }
 
+function Reset(props) {
+  if (props.show()) {
+    return <button onClick={props.onClick}>Reset</button>;
+  }
+  else {
+    return null;
+  }
+}
+
 class Game extends React.Component {
   constructor() {
     super();
@@ -68,6 +77,18 @@ class Game extends React.Component {
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
+    });
+  }
+
+  handleClickReset() {
+    console.log('at handleClickReset');
+    this.setState({
+      history: [{
+        squares: generateBoard()
+      }],
+      stepNumber: 0,
+      xIsNext: true,
+      options: ['X', 'O'],
     });
   }
 
@@ -160,13 +181,15 @@ class Game extends React.Component {
         <div className="game-info">
           <div>{status}</div>
           <ol>{moves}</ol>
+          <Reset
+            onClick={() => this.handleClickReset()}
+            show={() => this.state.stepNumber > 0}
+          />
         </div>
       </div>
     );
   }
 }
-
-// ========================================
 
 ReactDOM.render(
   <Game />,
