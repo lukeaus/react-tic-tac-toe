@@ -43,7 +43,7 @@ class Board extends React.Component {
 
 function Reset(props) {
   if (props.show()) {
-    return <button onClick={props.onClick}>Reset</button>;
+    return <button onClick={props.onClick}>{props.resetBtnTxt}</button>;
   }
   else {
     return null;
@@ -53,13 +53,26 @@ function Reset(props) {
 class Game extends React.Component {
   constructor() {
     super();
-    this.state = {
+    this.state = this.getInitialState();
+  }
+
+  getInitialState() {
+    const initialOptionsState = {
+      options: ['X', 'O'],
+    };
+    const boardResetState = this.getResetBoardState()
+    // We want out initial state to be a merge of initialOptionState & boardResetState
+    return Object.assign({}, initialOptionsState, boardResetState)
+  }
+
+
+  getResetBoardState(fromConstructor) {
+    return {
       history: [{
         squares: generateBoard()
       }],
       stepNumber: 0,
       xIsNext: true,
-      options: ['X', 'O'],
     };
   }
 
@@ -81,15 +94,7 @@ class Game extends React.Component {
   }
 
   handleClickReset() {
-    console.log('at handleClickReset');
-    this.setState({
-      history: [{
-        squares: generateBoard()
-      }],
-      stepNumber: 0,
-      xIsNext: true,
-      options: ['X', 'O'],
-    });
+    this.setState(this.getResetBoardState());
   }
 
   jumpTo(step) {
@@ -164,11 +169,15 @@ class Game extends React.Component {
     });
 
     let status;
+    let resetBtnTxt;
     if (winner) {
       status = 'Winner: ' + winner;
+      resetBtnTxt = 'New Game';
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      resetBtnTxt = 'Reset';
     }
+
 
     return (
       <div className="game">
@@ -184,6 +193,7 @@ class Game extends React.Component {
           <Reset
             onClick={() => this.handleClickReset()}
             show={() => this.state.stepNumber > 0}
+            resetBtnTxt={resetBtnTxt}
           />
         </div>
       </div>
